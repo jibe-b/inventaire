@@ -34,5 +34,14 @@ module.exports = (req, res)->
   .then (params)->
     { type, search, limit } = params
     return searchType search, type, limit
+  .map addUri
   .then responses_.Wrap(res, 'results')
   .catch error_.Handler(req, res)
+
+# All search results should have a URI by now
+# see https://github.com/inventaire/entities-search-engine/blob/d778475/lib/format_entity.coffee#L16
+# but to ease the transition, we need to had them manually
+addUri = (result)->
+  # Only Wikidata entities miss their URI
+  result.uri or= "wd:#{result.id}"
+  return result

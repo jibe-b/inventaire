@@ -4,7 +4,7 @@ getEntitiesByUris = __.require 'controllers', 'entities/lib/get_entities_by_uris
 
 module.exports = (entities)->
   { works, editions } = splitEntities entities
-  worksUris = _.pluck works, 'uri'
+  worksUris = _.map works, 'uri'
   data = { editionsWorksUris: [], editionWorkMap: {} }
   { editionsWorksUris, editionWorkMap } = editions.reduce aggregateEditionsWorksUris, data
   # Do no refetch works already fetched

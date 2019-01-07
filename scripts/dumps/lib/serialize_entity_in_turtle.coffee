@@ -5,16 +5,22 @@ properties = __.require 'controllers', 'entities/lib/properties/properties_value
 { yellow } = require 'chalk'
 
 module.exports = (entity)->
-  { _id } = entity
+  { _id, _rev } = entity
 
   text = "inv:#{_id} a wikibase:Item ;"
+
+  version = parseInt _rev.split('-')
+  text += """\n  schema:version #{version} ;"""
 
   for lang, value of entity.labels
     formattedLabel = formatStringValue value
     text += """\n  rdfs:label #{formattedLabel}@#{lang} ;"""
     text += """\n  skos:prefLabel #{formattedLabel}@#{lang} ;"""
 
+  statementsCount = 0
+
   for property, propClaims of entity.claims
+    statementsCount += 1
     { datatype } = properties[property]
     formatter = datatypePropClaimsFormatter[datatype]
     if formatter?
@@ -22,6 +28,13 @@ module.exports = (entity)->
       text += formatPropClaims property, formattedPropClaims
     else
       console.warn yellow('missing formatter'), datatype
+
+  text += """\n  wikibase:statements #{statementsCount} ;"""
+
+  labelsCount = Object.keys(entity.labels).length
+  # This property isn't actually used by Wikidata
+  # but builds on the idea of 'wikibase:statements'
+  text += """\n  wikibase:labels #{labelsCount} ;"""
 
   # Replace the last ';' by a '.' and add a line break
   # to have one line between each entity

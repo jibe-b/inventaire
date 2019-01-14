@@ -104,6 +104,7 @@ module.exports =
   generics: generics
   refresh: generics.boolean
   filter: whitelistedString
+  group: couchUuid
   ids: couchUuids
   isbn: isbn
   item: couchUuid

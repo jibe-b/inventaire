@@ -1,12 +1,14 @@
 CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
+assert_ = __.require 'utils', 'assert_types'
 { authReq, authReqB, getUserB } = require '../utils/utils'
 faker = require 'faker'
 endpointBase = '/api/groups'
 endpointAction = endpointBase + '?action'
 
 getGroup = (groupId)->
+  assert_.string groupId
   authReq 'get', "#{endpointAction}=by-id&id=#{groupId}"
   .get 'group'
 

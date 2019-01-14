@@ -2,6 +2,7 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 error_ = __.require 'lib', 'error/error'
+assert_ = __.require 'utils', 'assert_types'
 
 module.exports = Group = {}
 
@@ -104,7 +105,7 @@ findMembership = (userId, group, previousCategory, wanted)->
     else return
 
 userIsRole = (role)-> (userId, group)->
-  ids = group[role].map _.property('user')
+  ids = _.map group[role], 'user'
   return userId in ids
 
 Group.userIsAdmin = userIsAdmin = userIsRole 'admins'
@@ -116,5 +117,11 @@ Group.userIsMember = (userId, group)->
 Group.categories =
   members: [ 'admins', 'members' ]
   users: [ 'admins', 'members', 'invited', 'requested' ]
+
+Group.getAllMembers = (group)->
+  assert_.object group
+  adminsIds = _.map group.admins, 'user'
+  membersIds = _.map group.members, 'user'
+  return adminsIds.concat membersIds
 
 Group.attributes = require './attributes/group'

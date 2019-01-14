@@ -58,6 +58,12 @@ module.exports = groups_ =
   byCreation: (limit = 10)->
     db.viewCustom 'byCreation', { limit, descending: true, include_docs: true }
 
+  getGroupMembersIds: (groupId)->
+    groups_.byId groupId
+    .then (group)->
+      unless group? then throw error_.notFound { group: groupId }
+      return Group.getAllMembers group
+
 groups_.byPosition = __.require('lib', 'by_position')(db, 'groups')
 
 membershipActions = require('./membership_actions')(db)

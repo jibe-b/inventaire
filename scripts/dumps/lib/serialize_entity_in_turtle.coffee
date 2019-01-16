@@ -15,7 +15,6 @@ module.exports = (entity)->
   for lang, value of entity.labels
     formattedLabel = formatStringValue value
     text += """\n  rdfs:label #{formattedLabel}@#{lang} ;"""
-    text += """\n  skos:prefLabel #{formattedLabel}@#{lang} ;"""
 
   statementsCount = 0
 

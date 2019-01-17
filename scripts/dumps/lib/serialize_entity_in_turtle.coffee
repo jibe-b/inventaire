@@ -5,7 +5,9 @@ properties = __.require 'controllers', 'entities/lib/properties/properties_value
 { yellow } = require 'chalk'
 
 module.exports = (entity)->
-  { _id, _rev } = entity
+  { _id, _rev, type, redirect } = entity
+
+  if type isnt 'entity' or redirect then return ''
 
   text = "inv:#{_id} a wikibase:Item ;"
 

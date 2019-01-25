@@ -3,9 +3,9 @@ __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
 { getUser, getUserB, authReq, undesiredErr, undesiredRes } = __.require 'apiTests', 'utils/utils'
-{ createItem, createItems } = require '../fixtures/items'
 endpoint = '/api/items?action=inventory-view'
 { groupPromise } = require '../fixtures/groups'
+{ createUserWithItems } = require '../fixtures/populate'
 
 describe 'items:inventory-view', ->
   it 'should reject requests without a user or a group', (done)->
@@ -20,7 +20,7 @@ describe 'items:inventory-view', ->
     return
 
   it 'should return a user inventory-view', (done)->
-    getUser()
+    createUserWithItems()
     .get '_id'
     .then (userId)-> authReq 'get', "#{endpoint}&user=#{userId}"
     .then (res)->
@@ -35,11 +35,8 @@ describe 'items:inventory-view', ->
 
   it 'should return a group inventory-view', (done)->
     groupPromise
-    .then _.Log('group')
     .get '_id'
-    .then _.Log('groupId')
     .then (groupId)-> authReq 'get', "#{endpoint}&group=#{groupId}"
-    .then _.Log('res')
     .then (res)->
       res.worksTree.should.be.an.Object()
       res.worksTree.owner.should.be.an.Object()

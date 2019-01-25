@@ -21,10 +21,11 @@ buildWorkUriItemsMap = (editionWorkMap)-> (workUriItemsMap, item)->
 
 aggregateOwnersWorks = (editionWorkMap)-> (index, item)->
   { _id:itemId, owner:ownerId, entity:entityUri } = item
-  workUri = editionWorkMap[entityUri] or entityUri
+  worksUris = editionWorkMap[entityUri] or [ entityUri ]
   index[ownerId] or= {}
-  index[ownerId][workUri] or= []
-  index[ownerId][workUri].push itemId
+  for workUri in worksUris
+    index[ownerId][workUri] or= []
+    index[ownerId][workUri].push itemId
   return index
 
 getItemsIdsByDate = (items)->

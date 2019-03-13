@@ -5,11 +5,17 @@ properties = __.require 'controllers', 'entities/lib/properties/properties_value
 { yellow } = require 'chalk'
 
 module.exports = (entity)->
-  { _id, _rev, type, redirect } = entity
+  { _id, _rev, created, updated, type, redirect } = entity
 
   if type isnt 'entity' or redirect then return ''
 
   text = "inv:#{_id} a wikibase:Item ;"
+
+  dateCreated = new Date(created).toISOString()
+  text += """\n  schema:dateCreated "#{dateCreated}"^^xsd:dateTime ;"""
+
+  dateModified = new Date(updated).toISOString()
+  text += """\n  schema:dateModified "#{dateModified}"^^xsd:dateTime ;"""
 
   version = parseInt _rev.split('-')
   text += """\n  schema:version #{version} ;"""

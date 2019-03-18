@@ -28,8 +28,8 @@ describe 'entities:resolve:create-unresolved', ->
       works: [ { labels: { en: randomWorkLabel() } } ]
       authors: [ { labels: { en: humanName() } } ]
       create: true
-    .get 'result'
-    .then (result)->
+    .get 'results'
+    .then (results)->
       result.edition[0].created.should.equal true
       result.authors[0].created.should.equal true
       result.works[0].created.should.equal true

@@ -20,7 +20,7 @@ describe 'entities:resolver:update-resolved', ->
           'wdt:P648': [ olId ],
           'wdt:P50': [ authorUri, authorUri2 ]
       ]
-      options: [ 'update' ]
+      update: true
     createWork()
     .tap (work)-> addClaim work.uri, 'wdt:P648', olId
     .then (work)->
@@ -48,7 +48,7 @@ describe 'entities:resolver:update-resolved', ->
           'wdt:P648': [ olId ],
           'wdt:P50': [ authorUri ]
       ]
-      options: [ 'update' ]
+      update: true
     createWork()
     .tap (work)-> addClaim work.uri, 'wdt:P648', olId
     .tap (work)-> addClaim work.uri, 'wdt:P50', authorUri2
@@ -75,7 +75,7 @@ describe 'entities:resolver:update-resolved', ->
           'wdt:P648': [ olId ],
           'wdt:P856': [ officialWebsite ]
       ]
-      options: [ 'update' ]
+      update: true
     createHuman()
     .tap (human)-> addClaim human.uri, 'wdt:P648', olId
     .then (work)->
@@ -108,7 +108,7 @@ describe 'entities:resolver:update-resolved', ->
           isbn: isbn
           claims: { 'wdt:P123': publisher }
         ]
-        options: [ 'update' ]
+        update: true
       resolve(entry).get('result').delay(10)
       .then (result)->
         getByUris editionUri

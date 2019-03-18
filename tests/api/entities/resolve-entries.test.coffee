@@ -30,7 +30,7 @@ describe 'entities:resolve-entries', ->
         edition: [ { isbn: generateIsbn13() } ]
         works: [ { labels: { en: randomWorkLabel() } } ]
       ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       entityUri = result[0].edition[0].uri

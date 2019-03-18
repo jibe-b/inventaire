@@ -14,7 +14,7 @@ describe 'entities:resolve:create-unresolved', ->
     resolve
       edition: [ { isbn: invalidIsbn } ]
       works: [ { labels: { en: randomWorkLabel() } } ]
-      options: [ 'create' ]
+      create: true
     .catch (err)->
       err.body.status_verbose.should.startWith 'invalid isbn'
       done()
@@ -27,7 +27,7 @@ describe 'entities:resolve:create-unresolved', ->
       edition: [ { isbn: generateIsbn13() } ]
       works: [ { labels: { en: randomWorkLabel() } } ]
       authors: [ { labels: { en: humanName() } } ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       result.edition[0].created.should.equal true
@@ -46,7 +46,7 @@ describe 'entities:resolve:create-unresolved', ->
     resolve
       edition: [ { isbn: generateIsbn13(), claims: { 'wdt:P1476': editionLabel } } ]
       works: [ { labels: { en: randomWorkLabel() } } ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       should(result.edition[0].uri).be.ok()
@@ -70,7 +70,7 @@ describe 'entities:resolve:create-unresolved', ->
     resolve
       edition: [ { isbn: generateIsbn13(), claims: { 'wdt:P407': [ frenchLang ]} } ]
       works: [ { labels: { en: randomWorkLabel() } } ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       should(result.edition[0].uri).be.ok()
@@ -90,7 +90,7 @@ describe 'entities:resolve:create-unresolved', ->
     resolve
       edition: [ { isbn: generateIsbn13() } ]
       works: [ { claims: { 'wdt:P648': [ olId ] }, labels: { en: randomWorkLabel() } } ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       should(result.edition[0].uri).be.ok()
@@ -111,7 +111,7 @@ describe 'entities:resolve:create-unresolved', ->
       edition: [ { isbn: generateIsbn13() } ]
       works: [ { labels: { en: randomWorkLabel() } } ]
       authors: [ { claims: { 'wdt:P648': [ olId ] }, labels: { en: randomWorkLabel() } } ]
-      options: [ 'create' ]
+      create: true
     .get 'result'
     .then (result)->
       should(result.edition[0].uri).be.ok()
@@ -135,7 +135,7 @@ describe 'entities:resolve:create-unresolved', ->
         claims: { 'wdt:P648': [ olId ] }
         labels: { en: randomWorkLabel() }
       ]
-      options: [ 'create' ]
+      create: true
       summary: summary
     .get 'result'
     .then (result)->

@@ -1,4 +1,7 @@
-module.exports = (entities)-> entities.reduce addToTree, {}
+base = ->
+  author: {}
+  genre: {}
+  subject: {}
 
 viewProperties =
   'wdt:P50': 'author'
@@ -8,13 +11,15 @@ viewProperties =
 addToTree = (tree, entity)->
   { uri, claims } = entity
   for property, name of viewProperties
-    tree[name] or= { unknown: [] }
     values = entity.claims[property]
     if values?
       for value in values
         tree[name][value] or= []
         tree[name][value].push uri
     else
+      tree[name].unknown or= []
       tree[name].unknown.push uri
 
   return tree
+
+module.exports = (entities)-> entities.reduce addToTree, base()

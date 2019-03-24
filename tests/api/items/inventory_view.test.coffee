@@ -25,6 +25,9 @@ describe 'items:inventory-view', ->
     .then (userId)-> authReq 'get', "#{endpoint}&user=#{userId}"
     .then (res)->
       res.worksTree.should.be.an.Object()
+      res.worksTree.author.should.be.an.Object()
+      res.worksTree.genre.should.be.an.Object()
+      res.worksTree.subject.should.be.an.Object()
       res.worksTree.owner.should.be.an.Object()
       res.workUriItemsMap.should.be.an.Object()
       res.itemsByDate.should.be.an.Array()
@@ -39,6 +42,9 @@ describe 'items:inventory-view', ->
     .then (groupId)-> authReq 'get', "#{endpoint}&group=#{groupId}"
     .then (res)->
       res.worksTree.should.be.an.Object()
+      res.worksTree.author.should.be.an.Object()
+      res.worksTree.genre.should.be.an.Object()
+      res.worksTree.subject.should.be.an.Object()
       res.worksTree.owner.should.be.an.Object()
       res.workUriItemsMap.should.be.an.Object()
       res.itemsByDate.should.be.an.Array()

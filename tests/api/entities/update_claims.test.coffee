@@ -2,7 +2,8 @@ CONFIG = require 'config'
 __ = CONFIG.universalPath
 _ = __.require 'builders', 'utils'
 should = require 'should'
-{ Promise } = __.require 'lib', 'promises'
+promises_ = __.require 'lib', 'promises'
+{ Promise } = promises_
 { undesiredRes, undesiredErr } = require '../utils/utils'
 { createWork, createEdition, createHuman } = require '../fixtures/entities'
 { getByUri, addClaim, updateClaim, merge } = require '../utils/entities'
@@ -97,7 +98,7 @@ describe 'entities:update-claims', ->
     createWork()
     .then (work)->
       { uri: workUri } = work
-      Promise.all authorsUris.map((uri)-> updateClaim work.uri, 'wdt:P50', null, uri)
+      promises_.map authorsUris, (uri)-> updateClaim work.uri, 'wdt:P50', null, uri
       .then (responses)->
         responses.forEach (res)-> should(res.ok).be.true()
         getByUri work.uri

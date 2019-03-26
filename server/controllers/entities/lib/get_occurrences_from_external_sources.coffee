@@ -63,7 +63,7 @@ getOpenLibraryOccurrences = (authorEntity, worksLabels)->
   # Discard entities with several ids as one of the two
   # is wrong and we can't know which
   if olIds?.length isnt 1 then return false
-  Promise.all worksLabels.map (workTitle)-> getOlAuthorWorksTitles(olIds[0], workTitle)
+  promises_.map worksLabels, (workTitle)-> getOlAuthorWorksTitles(olIds[0], workTitle)
   .then _.flatten
   .then (res)-> _.map(res, createOccurrences(worksLabels))
 

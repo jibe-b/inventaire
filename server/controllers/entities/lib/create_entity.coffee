@@ -14,26 +14,28 @@ module.exports = (labels, claims, userId, batchId)->
   assert_.types ['object', 'object', 'string'], [ labels, claims, userId ]
   _.log arguments, 'entity to create'
 
-  promises_.try -> validateValueType claims['wdt:P31']
-  .tap (type)-> validateLabels labels, claims, type
-  .then (type)-> validateClaims claims, type
-  .then entities_.create
+  promises_.try ->
+    type = getValueType claims
+    validateValueType type, claims['wdt:P31']
+    validateLabels labels, type
+    validateClaims claims, type
+  .then -> entities_.createBlank()
   .then (currentDoc)->
     updatedLabels = labels
     updatedClaims = claims
     entities_.edit { userId, updatedLabels, updatedClaims, currentDoc, batchId }
 
-validateValueType = (wdtP31)->
+getValueType = (claims)->
+  wdtP31 = claims['wdt:P31']
   unless _.isNonEmptyArray wdtP31
     throw error_.new "wdt:P31 array can't be empty", 400, wdtP31
+  return getEntityType wdtP31
 
-  type = getEntityType wdtP31
+validateValueType = (type, wdtP31)->
   unless type?
     throw error_.new "wdt:P31 value isn't a known valid value", 400, wdtP31
 
-  return type
-
-validateLabels = (labels, claims, type)->
+validateLabels = (labels, type)->
   if type in typesWithoutLabels
     if _.isNonEmptyPlainObject labels
       throw error_.new "#{type}s can't have labels", 400, labels

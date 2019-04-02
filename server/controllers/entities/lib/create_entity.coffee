@@ -10,7 +10,7 @@ getEntityType = require './get_entity_type'
 validateClaimProperty = require './validate_claim_property'
 typesWithoutLabels = require './types_without_labels'
 
-module.exports = (labels, claims, userId, summary)->
+module.exports = (labels, claims, userId, batchId)->
   assert_.types ['object', 'object', 'string'], [ labels, claims, userId ]
   _.log arguments, 'entity to create'
 
@@ -21,7 +21,7 @@ module.exports = (labels, claims, userId, summary)->
   .then (currentDoc)->
     updatedLabels = labels
     updatedClaims = claims
-    entities_.edit { userId, updatedLabels, updatedClaims, currentDoc, summary }
+    entities_.edit { userId, updatedLabels, updatedClaims, currentDoc, batchId }
 
 validateValueType = (wdtP31)->
   unless _.isNonEmptyArray wdtP31

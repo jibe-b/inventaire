@@ -6,24 +6,24 @@ createEntity = require '../create_entity'
 properties = require '../properties/properties_values_constraints'
 isbn_ = __.require 'lib', 'isbn/isbn'
 
-module.exports = (createOption, userId, summary)-> (entry)->
+module.exports = (createOption, userId, batchId)-> (entry)->
   unless createOption then return entry
   { edition, works, authors } = entry
 
-  createAuthors authors, userId, summary
-  .then -> createWorks works, authors, userId, summary
-  .then -> createEdition edition, works, userId, summary
+  createAuthors authors, userId, batchId
+  .then -> createWorks works, authors, userId, batchId
+  .then -> createEdition edition, works, userId, batchId
   .then -> entry
 
-createAuthors = (authors, userId, summary)->
+createAuthors = (authors, userId, batchId)->
   unresolvedAuthors = _.reject authors, 'uri'
   Promise.all unresolvedAuthors.map (author)->
     claims = {}
 
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
-    createEntityFromSeed author, claims, userId, summary
+    createEntityFromSeed author, claims, userId, batchId
 
-createWorks = (works, authors, userId, summary)->
+createWorks = (works, authors, userId, batchId)->
   unresolvedWorks = _.reject works, 'uri'
   relativesUris = getRelativeUris authors
   Promise.all unresolvedWorks.map (work)->
@@ -31,9 +31,9 @@ createWorks = (works, authors, userId, summary)->
 
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q571' ]
     addClaimIfValid claims, 'wdt:P50', relativesUris
-    createEntityFromSeed work, claims, userId, summary
+    createEntityFromSeed work, claims, userId, batchId
 
-createEdition = (edition, works, userId, summary)->
+createEdition = (edition, works, userId, batchId)->
   relativesUris = getRelativeUris works
   { isbn } = edition
   claims = {}
@@ -49,18 +49,18 @@ createEdition = (edition, works, userId, summary)->
 
   # garantee that an edition shall not have label
   edition.labels = {}
-  createEntityFromSeed edition, claims, userId, summary
+  createEntityFromSeed edition, claims, userId, batchId
 
 getRelativeUris = (relatives)->
   _.compact(_.map(relatives, 'uri'))
 
-createEntityFromSeed = (entity, claims, userId, summary)->
+createEntityFromSeed = (entity, claims, userId, batchId)->
   { labels, claims:entryClaims } = entity
 
   for property, values of entryClaims
     addClaimIfValid claims, property, values
 
-  createEntity labels, claims, userId, summary
+  createEntity labels, claims, userId, batchId
   .then addUriCreated(entity)
 
 addUriCreated = (entryEntity)-> (createdEntity)->

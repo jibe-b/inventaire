@@ -5,8 +5,9 @@ should = require 'should'
 { Promise } = __.require 'lib', 'promises'
 { authReq, adminReq, getUser, undesiredErr } = require '../utils/utils'
 { getByUris, getHistory } = require '../utils/entities'
-{ randomWorkLabel, humanName, generateIsbn13, someOpenLibraryId } = require '../fixtures/entities'
+{ randomWorkLabel, humanName, generateIsbn13, someGoodReadsId } = require '../fixtures/entities'
 resolveAndCreate = (entry)->
+
   authReq 'post', '/api/entities?action=resolve',
     entries: [ entry ]
     create: true
@@ -88,10 +89,10 @@ describe 'entities:resolve:create-unresolved', ->
     return
 
   it 'should add optional claims to created works', (done)->
-    olId = someOpenLibraryId 'work'
+    goodReadsId = someGoodReadsId()
     resolveAndCreate
       edition: [ { isbn: generateIsbn13() } ]
-      works: [ { claims: { 'wdt:P648': [ olId ] }, labels: { en: randomWorkLabel() } } ]
+      works: [ { claims: { 'wdt:P2969': [ goodReadsId ] }, labels: { en: randomWorkLabel() } } ]
     .get 'results'
     .then (results)->
       result = results[0]
@@ -100,19 +101,19 @@ describe 'entities:resolve:create-unresolved', ->
       getByUris works.map(_.property('uri'))
       .get 'entities'
       .then (entities)->
-        newWorkClaimValue = _.values(entities)[0].claims['wdt:P648'][0]
-        newWorkClaimValue.should.equal olId
+        newWorkClaimValue = _.values(entities)[0].claims['wdt:P2969'][0]
+        newWorkClaimValue.should.equal goodReadsId
         done()
     .catch undesiredErr(done)
 
     return
 
   it 'should add optional claims to created authors', (done)->
-    olId = someOpenLibraryId 'author'
+    goodReadsId = someGoodReadsId()
     resolveAndCreate
       edition: [ { isbn: generateIsbn13() } ]
       works: [ { labels: { en: randomWorkLabel() } } ]
-      authors: [ { claims: { 'wdt:P648': [ olId ] }, labels: { en: randomWorkLabel() } } ]
+      authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] }, labels: { en: humanName() } } ]
     .get 'results'
     .then (results)->
       result = results[0]
@@ -121,8 +122,8 @@ describe 'entities:resolve:create-unresolved', ->
       getByUris authors.map(_.property('uri'))
       .get 'entities'
       .then (entities)->
-        newWorkClaimValue = _.values(entities)[0].claims['wdt:P648'][0]
-        newWorkClaimValue.should.equal olId
+        newWorkClaimValue = _.values(entities)[0].claims['wdt:P2963'][0]
+        newWorkClaimValue.should.equal goodReadsId
         done()
     .catch undesiredErr(done)
 
@@ -130,13 +131,9 @@ describe 'entities:resolve:create-unresolved', ->
 
   it 'should add a batch timestamp to patches', (done)->
     startTime = Date.now()
-    olId = someOpenLibraryId 'work'
-    work =
-      claims: { 'wdt:P648': [ olId ] }
-      labels: { en: randomWorkLabel() }
     entry =
       edition: [ { isbn: generateIsbn13() } ]
-      works: [ work ]
+      works: [ { claims: { 'wdt:P2969': [ someGoodReadsId() ] }, labels: { en: humanName() } } ]
     resolveAndCreate entry
     .get 'results'
     .then (results)->

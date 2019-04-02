@@ -11,14 +11,14 @@ module.exports = (createOption, userId, summary)-> (entry)->
   { edition, works, authors } = entry
 
   createAuthors authors, userId, summary
-  .then -> createWorks(works, authors, userId, summary)
-  .then -> createEdition(edition, works, userId, summary)
+  .then -> createWorks works, authors, userId, summary
+  .then -> createEdition edition, works, userId, summary
   .then -> entry
 
 createAuthors = (authors, userId, summary)->
   unresolvedAuthors = _.reject authors, 'uri'
   Promise.all unresolvedAuthors.map (author)->
-    claims = { }
+    claims = {}
 
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q5' ]
     createEntityFromSeed author, claims, userId, summary
@@ -27,7 +27,7 @@ createWorks = (works, authors, userId, summary)->
   unresolvedWorks = _.reject works, 'uri'
   relativesUris = getRelativeUris authors
   Promise.all unresolvedWorks.map (work)->
-    claims = { }
+    claims = {}
 
     addClaimIfValid claims, 'wdt:P31', [ 'wd:Q571' ]
     addClaimIfValid claims, 'wdt:P50', relativesUris
@@ -35,22 +35,21 @@ createWorks = (works, authors, userId, summary)->
 
 createEdition = (edition, works, userId, summary)->
   relativesUris = getRelativeUris works
-  Promise.all edition.map (edition)->
-    { isbn } = edition
-    claims = { }
+  { isbn } = edition
+  claims = {}
 
-    addClaimIfValid claims, 'wdt:P31', [ 'wd:Q3331189' ]
-    addClaimIfValid claims, 'wdt:P629', relativesUris
+  addClaimIfValid claims, 'wdt:P31', [ 'wd:Q3331189' ]
+  addClaimIfValid claims, 'wdt:P629', relativesUris
 
-    if isbn?
-      hyphenatedIsbn = isbn_.toIsbn13h(isbn)
-      addClaimIfValid claims, 'wdt:P212', [ hyphenatedIsbn ]
+  if isbn?
+    hyphenatedIsbn = isbn_.toIsbn13h(isbn)
+    addClaimIfValid claims, 'wdt:P212', [ hyphenatedIsbn ]
 
-    addClaimEditionTitle edition, works, claims
+  addClaimEditionTitle edition, works, claims
 
-    # garantee that an edition shall not have label
-    edition.labels = { }
-    createEntityFromSeed edition, claims, userId, summary
+  # garantee that an edition shall not have label
+  edition.labels = {}
+  createEntityFromSeed edition, claims, userId, summary
 
 getRelativeUris = (relatives)->
   _.compact(_.map(relatives, 'uri'))
@@ -62,8 +61,6 @@ createEntityFromSeed = (entity, claims, userId, summary)->
     addClaimIfValid claims, property, values
 
   createEntity labels, claims, userId, summary
-  .then _.Log("created entity")
-  .catch _.ErrorRethrow("createEntity err")
   .then addUriCreated(entity)
 
 addUriCreated = (entryEntity)-> (createdEntity)->

@@ -30,9 +30,9 @@ describe 'entities:resolve:create-unresolved', ->
       edition: { isbn: generateIsbn13() }
       works: [ { labels: { en: randomWorkLabel() } } ]
       authors: [ { labels: { en: humanName() } } ]
-    .get 'results'
-    .then (results)->
-      result = results[0]
+    .get 'entries'
+    .then (entries)->
+      result = entries[0]
       result.edition.created.should.equal true
       result.authors[0].created.should.equal true
       result.works[0].created.should.equal true
@@ -48,10 +48,10 @@ describe 'entities:resolve:create-unresolved', ->
     rawIsbn = generateIsbn13()
     ensureEditionExists "isbn:#{rawIsbn}"
     .then ->  resolveAndCreate { edition: { isbn: rawIsbn } }
-    .get 'results'
-    .then (results)->
-      results[0].should.be.an.Object()
-      results[0].edition.uri.should.equal "isbn:#{rawIsbn}"
+    .get 'entries'
+    .then (entries)->
+      entries[0].should.be.an.Object()
+      entries[0].edition.uri.should.equal "isbn:#{rawIsbn}"
       done()
     .catch done
 
@@ -62,9 +62,9 @@ describe 'entities:resolve:create-unresolved', ->
     resolveAndCreate
       edition: { isbn: generateIsbn13(), claims: { 'wdt:P1476': editionLabel } }
       works: [ { labels: { en: randomWorkLabel() } } ]
-    .get 'results'
-    .then (results)->
-      result = results[0]
+    .get 'entries'
+    .then (entries)->
+      result = entries[0]
       should(result.edition.uri).be.ok()
       { edition } = result
 
@@ -86,9 +86,9 @@ describe 'entities:resolve:create-unresolved', ->
     resolveAndCreate
       edition: { isbn: generateIsbn13(), claims: { 'wdt:P407': [ frenchLang ] } }
       works: [ { labels: { en: randomWorkLabel() } } ]
-    .get 'results'
-    .then (results)->
-      result = results[0]
+    .get 'entries'
+    .then (entries)->
+      result = entries[0]
       should(result.edition.uri).be.ok()
       { edition } = result
       getByUris edition.uri
@@ -106,9 +106,9 @@ describe 'entities:resolve:create-unresolved', ->
     resolveAndCreate
       edition: { isbn: generateIsbn13() }
       works: [ { claims: { 'wdt:P2969': [ goodReadsId ] }, labels: { en: randomWorkLabel() } } ]
-    .get 'results'
-    .then (results)->
-      result = results[0]
+    .get 'entries'
+    .then (entries)->
+      result = entries[0]
       should(result.edition.uri).be.ok()
       { works } = result
       getByUris works.map(_.property('uri'))
@@ -127,9 +127,9 @@ describe 'entities:resolve:create-unresolved', ->
       edition: { isbn: generateIsbn13() }
       works: [ { labels: { en: randomWorkLabel() } } ]
       authors: [ { claims: { 'wdt:P2963': [ goodReadsId ] }, labels: { en: humanName() } } ]
-    .get 'results'
-    .then (results)->
-      result = results[0]
+    .get 'entries'
+    .then (entries)->
+      result = entries[0]
       should(result.edition.uri).be.ok()
       { authors } = result
       getByUris authors.map(_.property('uri'))
@@ -148,9 +148,9 @@ describe 'entities:resolve:create-unresolved', ->
       edition: { isbn: generateIsbn13() }
       works: [ { claims: { 'wdt:P2969': [ someGoodReadsId() ] }, labels: { en: humanName() } } ]
     resolveAndCreate entry
-    .get 'results'
-    .then (results)->
-      result = results[0]
+    .get 'entries'
+    .then (entries)->
+      result = entries[0]
       { uri: editionUri } = result.edition
       getHistory editionUri
       .then (patches)->
@@ -168,9 +168,9 @@ describe 'entities:resolve:create-unresolved', ->
       edition: { isbn: generateIsbn13() }
       works: [ { labels: { en: randomWorkLabel() } } ]
       authors: [ { labels: { en: humanName() } } ]
-    .get 'results'
-    .then (results)->
-      result = results[0]
+    .get 'entries'
+    .then (entries)->
+      result = entries[0]
       workUri = result.works[0].uri
       getByUris workUri
       .get 'entities'
@@ -189,9 +189,9 @@ describe 'entities:resolve:create-unresolved', ->
       edition:
         isbn: generateIsbn13()
         claims: { 'wdt:P1476': [ title ] }
-    .get 'results'
-    .then (results)->
-      result = results[0]
+    .get 'entries'
+    .then (entries)->
+      result = entries[0]
       workUri = result.works[0].uri
       getByUris workUri
       .get 'entities'

@@ -13,18 +13,6 @@ resolveAndCreate = (entry)->
     create: true
 
 describe 'entities:resolve:create-unresolved', ->
-  it 'should throw when invalid isbn is passed', (done)->
-    invalidIsbn = '9780000000000'
-    resolveAndCreate
-      edition: { isbn: invalidIsbn }
-      works: [ { labels: { en: randomWorkLabel() } } ]
-    .catch (err)->
-      err.body.status_verbose.should.startWith 'invalid isbn'
-      done()
-    .catch undesiredErr(done)
-
-    return
-
   it 'should create unresolved edition, work and author (the trinity)', (done)->
     resolveAndCreate
       edition: { isbn: generateIsbn13() }

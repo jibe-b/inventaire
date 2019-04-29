@@ -39,7 +39,7 @@ validateWikidataCompliance = (entity)->
   { claims } = entity
   unless claims? then throw error_.new 'invalid entity', 400, entity
 
-  entityType = getEntityType claims['wdt:P31']
+  entityType = getEntityType claims
   unless entityType in whitelistedEntityTypes
     throw error_.new 'invalid entity type', 400, { entityType, entity }
 
